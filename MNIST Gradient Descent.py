@@ -2,37 +2,44 @@ from keras.datasets import mnist
 from matplotlib import pyplot as plt
 import numpy as np
 
-n = 70000
-n_train = 60000
-n_test = 10000
+# Hyperparameters for training/testing
+n = 700  # Total number of data being analyzed = n_train+n_test
+n_train = 600  # Number of training data to train classifier
+n_test = 100  # Number of test data to test classifier
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
-x = np.append(x_train, x_test, axis=0)
-y = np.append(y_train, y_test, axis=0)
+#x = np.append(x_train, x_test)
+#y = np.append(y_train, y_test)
 
 x_train = x_train[:n_train, :]
 x_test = x_test[:n_test, :]
 y_train = y_train[:n_train]
 y_test = y_test[:n_test]  # Working
 
+print("Initial Data Format")
 print('x_train: ' + str(x_train.shape))
 print('y_train: ' + str(y_train.shape))
 print('x_test:  ' + str(x_test.shape))
 print('y_test:  ' + str(y_test.shape))
-print()
+
 x_train = x_train.reshape(n_train, 784)
 x_test = x_test.reshape(n_test, 784)
 
-x_train = x_train.transpose()
-x_test = x_test.transpose()
+print(x_train.shape)
 x_train = x_train / 255
 
+x_train = x_train.T
+x_test = x_test.T
+
+print("\nReformatted data - Rows are features, columns are data points.")
 print('x_train: ' + str(x_train.shape))
 print('y_train: ' + str(y_train.shape))
 print('x_test:  ' + str(x_test.shape))
 print('y_test:  ' + str(y_test.shape))
 print()
 
+# This shenanigans is O(N), probably a better way to do this.
+# Gives me 10 different vectors to perform binary classification for each number.
 y_train0 = np.zeros(n_train)
 y_train1 = np.zeros(n_train)
 y_train2 = np.zeros(n_train)
@@ -72,7 +79,7 @@ def sigmoid(theta, xi):
 
 
 def grad(theta, x_train, y_train):
-    r = 5 # regularization parameter
+    r = 2  # regularization parameter
     gradient = 2 * r * theta
     hessian = 2 * r * np.eye(784)
     for i in range(n_train):
@@ -94,7 +101,7 @@ theta7 = np.zeros((784,))
 theta8 = np.zeros((784,))
 theta9 = np.zeros((784,))
 for i in range(1):
-    print("iteration", i)
+    print("iteration", i + 1)
     g0, h0 = grad(theta0, x_train, y_train0)
     g1, h1 = grad(theta1, x_train, y_train1)
     g2, h2 = grad(theta2, x_train, y_train2)
@@ -163,8 +170,7 @@ for i in range(n_train):
         largest = 9
     y_pred.append(largest)
 y_pred = np.array(y_pred)
-print(y_pred)
-print(y_train)
+
 print("Training Accuracy: ", (sum(y_pred == y_train) / n_train) * 100, "%")
 
 y_pred = []
@@ -202,7 +208,6 @@ for i in range(n_test):
     y_pred.append(largest)
 print("Prediction and test accuracy: ", (sum(y_pred == y_test) / n_test) * 100, "%")
 print("Test Error: ", (sum(y_pred != y_test) / n_test) * 100, "%")
-
 
 '''
 for i in range(9):
