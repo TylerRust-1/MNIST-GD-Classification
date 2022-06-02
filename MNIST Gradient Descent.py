@@ -3,13 +3,13 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 # Hyperparameters for training/testing
-n = 700  # Total number of data being analyzed = n_train+n_test
-n_train = 600  # Number of training data to train classifier
-n_test = 100  # Number of test data to test classifier
+n = 70000  # Total number of data being analyzed = n_train+n_test
+n_train = 60000  # Number of training data to train classifier
+n_test = 10000  # Number of test data to test classifier
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
-#x = np.append(x_train, x_test)
-#y = np.append(y_train, y_test)
+# x = np.append(x_train, x_test)
+# y = np.append(y_train, y_test)
 
 x_train = x_train[:n_train, :]
 x_test = x_test[:n_test, :]
@@ -25,8 +25,7 @@ print('y_test:  ' + str(y_test.shape))
 x_train = x_train.reshape(n_train, 784)
 x_test = x_test.reshape(n_test, 784)
 
-print(x_train.shape)
-x_train = x_train / 255
+x_train = np.round(x_train / 255, 5)
 
 x_train = x_train.T
 x_test = x_test.T
@@ -75,11 +74,14 @@ for i, value in enumerate(y_train):
 
 # Functions for calculating the gradient
 def sigmoid(theta, xi):
-    return 1 / (1 + np.exp(-np.inner(theta, xi)))
+    x=-np.inner(theta, xi)
+    if x > 300: #To prevent overflow error (chose 300 because accuracy stayed same
+        return 0
+    return 1 / (1 + np.exp(x))
 
 
 def grad(theta, x_train, y_train):
-    r = 2  # regularization parameter
+    r = 3  # regularization parameter
     gradient = 2 * r * theta
     hessian = 2 * r * np.eye(784)
     for i in range(n_train):
