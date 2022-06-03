@@ -104,7 +104,7 @@ theta6 = np.zeros((784,))
 theta7 = np.zeros((784,))
 theta8 = np.zeros((784,))
 theta9 = np.zeros((784,))
-for i in range(4):
+for i in range(2):
     print("iteration", i + 1)
     g0, h0 = grad(theta0, x_train, y_train0)
     g1, h1 = grad(theta1, x_train, y_train1)
@@ -212,6 +212,8 @@ for i in range(n_test):
     y_pred.append(largest)
 # print("Predicted values\n", y_pred)
 # print("Actual values\n", y_test)
+print("Number of training data:", n_train)
+print("Number of test data:", n_train)
 print("Regularization parameter r:", r)
 print("Prediction and test accuracy: ", round((sum(y_pred == y_test) / n_test) * 100, 2), "%")
 print("Test Error: ", round((sum(y_pred != y_test) / n_test) * 100, 2), "%")
