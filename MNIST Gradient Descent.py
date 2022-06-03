@@ -3,10 +3,12 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 # Hyperparameters for training/testing
-n = 70000  # Total number of data being analyzed = n_train+n_test
-n_train = 60000  # Number of training data to train classifier
-n_test = 10000  # Number of test data to test classifier
+n_train = 10000  # Number of training data to train classifier Max of 60000
+n_test = 1000  # Number of test data to test classifier Max of 10000
+r = 2 # Regularization parameter
+n = n_train + n_test
 
+# Load data from mnist dataset
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 # x = np.append(x_train, x_test)
 # y = np.append(y_train, y_test)
@@ -74,14 +76,14 @@ for i, value in enumerate(y_train):
 
 # Functions for calculating the gradient
 def sigmoid(theta, xi):
-    x=-np.inner(theta, xi)
-    if x > 300: #To prevent overflow error (chose 300 because accuracy stayed same
+    x = -np.inner(theta, xi)
+    if x > 300:  # To prevent overflow error (chose 300 because accuracy stayed same
         return 0
     return 1 / (1 + np.exp(x))
 
 
 def grad(theta, x_train, y_train):
-    r = 3  # regularization parameter
+    global r #regularization parameter
     gradient = 2 * r * theta
     hessian = 2 * r * np.eye(784)
     for i in range(n_train):
@@ -102,7 +104,7 @@ theta6 = np.zeros((784,))
 theta7 = np.zeros((784,))
 theta8 = np.zeros((784,))
 theta9 = np.zeros((784,))
-for i in range(1):
+for i in range(4):
     print("iteration", i + 1)
     g0, h0 = grad(theta0, x_train, y_train0)
     g1, h1 = grad(theta1, x_train, y_train1)
@@ -173,7 +175,7 @@ for i in range(n_train):
     y_pred.append(largest)
 y_pred = np.array(y_pred)
 
-print("Training Accuracy: ", (sum(y_pred == y_train) / n_train) * 100, "%")
+print("Training Accuracy: ", round((sum(y_pred == y_train) / n_train) * 100, 2), "%")
 
 y_pred = []
 for i in range(n_test):
@@ -208,12 +210,19 @@ for i in range(n_test):
         temp = sigmoid(theta9, current_data)
         largest = 9
     y_pred.append(largest)
-print("Prediction and test accuracy: ", (sum(y_pred == y_test) / n_test) * 100, "%")
-print("Test Error: ", (sum(y_pred != y_test) / n_test) * 100, "%")
+# print("Predicted values\n", y_pred)
+# print("Actual values\n", y_test)
+print("Regularization parameter r:", r)
+print("Prediction and test accuracy: ", round((sum(y_pred == y_test) / n_test) * 100, 2), "%")
+print("Test Error: ", round((sum(y_pred != y_test) / n_test) * 100, 2), "%")
 
-'''
-for i in range(9):
-    plt.subplot(330 + 1 + i)
-    plt.imshow(train_X[i], cmap=plt.get_cmap('gray'))
-plt.show()
-'''
+temp = []
+for i in range(n_test):
+    if y_pred[i] != y_test[i]:
+        temp.append(i)
+
+for i in temp:
+    image = x_test[:, i].reshape(28, 28)
+    plt.imshow(image, cmap=plt.get_cmap('gray'))
+    plt.title("Prediction: " + str(y_pred[i]) + " Actual: " + str(y_test[i]))
+    plt.show()
