@@ -36,14 +36,15 @@ print('y_test:  ' + str(y_test.shape))
 print()
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Dense(10, input_shape=(784,), activation='sigmoid')  # The input shape is 784.
+    tf.keras.layers.Dense(100, input_shape=(784,), activation='relu'),
+    tf.keras.layers.Dense(100, input_shape=(100,), activation='relu'),
+    tf.keras.layers.Dense(10, activation='sigmoid')
 ])
-
 model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=5)
+model.fit(x_train, y_train, batch_size=256, epochs=5)
 
 model.evaluate(x_test, y_test)
 

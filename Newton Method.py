@@ -7,6 +7,7 @@ n_train = 10000  # Number of training data to train classifier Max of 60000
 n_test = 1000  # Number of test data to test classifier Max of 10000
 r = 2 # Regularization parameter
 n = n_train + n_test
+max_iter = 2
 
 # Load data from mnist dataset
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -27,10 +28,11 @@ print('y_test:  ' + str(y_test.shape))
 x_train = x_train.reshape(n_train, 784)
 x_test = x_test.reshape(n_test, 784)
 
-x_train = np.round(x_train / 255, 5)
+x_train = x_train / 255
+x_test = x_test / 255
 
-x_train = x_train.T
-x_test = x_test.T
+#x_train = x_train.T
+#x_test = x_test.T
 
 print("\nReformatted data - Rows are features, columns are data points.")
 print('x_train: ' + str(x_train.shape))
@@ -87,7 +89,7 @@ def grad(theta, x_train, y_train):
     gradient = 2 * r * theta
     hessian = 2 * r * np.eye(784)
     for i in range(n_train):
-        current_data = x_train[:, i]
+        current_data = x_train[i, :]
         gradient += (current_data * (sigmoid(theta, current_data) - y_train[i]))
         hessian += np.outer(current_data, current_data) * (sigmoid(theta, current_data)) * (
                 1 - sigmoid(theta, current_data))
@@ -104,7 +106,7 @@ theta6 = np.zeros((784,))
 theta7 = np.zeros((784,))
 theta8 = np.zeros((784,))
 theta9 = np.zeros((784,))
-for i in range(2):
+for i in range(max_iter):
     print("iteration", i + 1)
     g0, h0 = grad(theta0, x_train, y_train0)
     g1, h1 = grad(theta1, x_train, y_train1)
@@ -130,7 +132,7 @@ for i in range(2):
 
 y_pred = []
 for i in range(n_train):
-    current_data = x_train[:, i]
+    current_data = x_train[i, :]
     temp = (sigmoid(theta0, current_data))
     largest = 0
     '''
@@ -179,7 +181,7 @@ print("Training Accuracy: ", round((sum(y_pred == y_train) / n_train) * 100, 2),
 
 y_pred = []
 for i in range(n_test):
-    current_data = x_test[:, i]
+    current_data = x_test[i, :]
     temp = (sigmoid(theta0, current_data))
     largest = 0
     if sigmoid(theta1, current_data) > temp:
@@ -213,7 +215,7 @@ for i in range(n_test):
 # print("Predicted values\n", y_pred)
 # print("Actual values\n", y_test)
 print("Number of training data:", n_train)
-print("Number of test data:", n_train)
+print("Number of test data:", n_test)
 print("Regularization parameter r:", r)
 print("Prediction and test accuracy: ", round((sum(y_pred == y_test) / n_test) * 100, 2), "%")
 print("Test Error: ", round((sum(y_pred != y_test) / n_test) * 100, 2), "%")
@@ -224,7 +226,7 @@ for i in range(n_test):
         temp.append(i)
 
 for i in temp:
-    image = x_test[:, i].reshape(28, 28)
+    image = x_test[i, :].reshape(28, 28)
     plt.imshow(image, cmap=plt.get_cmap('gray'))
     plt.title("Prediction: " + str(y_pred[i]) + " Actual: " + str(y_test[i]))
     plt.show()
