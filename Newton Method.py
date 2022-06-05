@@ -11,8 +11,6 @@ max_iter = 2
 
 # Load data from mnist dataset
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
-# x = np.append(x_train, x_test)
-# y = np.append(y_train, y_test)
 
 x_train = x_train[:n_train, :]
 x_test = x_test[:n_test, :]
@@ -31,10 +29,7 @@ x_test = x_test.reshape(n_test, 784)
 x_train = x_train / 255
 x_test = x_test / 255
 
-#x_train = x_train.T
-#x_test = x_test.T
-
-print("\nReformatted data - Rows are features, columns are data points.")
+print("\nReformatted data")
 print('x_train: ' + str(x_train.shape))
 print('y_train: ' + str(y_train.shape))
 print('x_test:  ' + str(x_test.shape))
@@ -106,6 +101,7 @@ theta6 = np.zeros((784,))
 theta7 = np.zeros((784,))
 theta8 = np.zeros((784,))
 theta9 = np.zeros((784,))
+#THIS IS WHERE ALL THE RUNTIME IS SPENT
 for i in range(max_iter):
     print("iteration", i + 1)
     g0, h0 = grad(theta0, x_train, y_train0)
@@ -135,18 +131,6 @@ for i in range(n_train):
     current_data = x_train[i, :]
     temp = (sigmoid(theta0, current_data))
     largest = 0
-    '''
-    print(sigmoid(theta0, current_data))
-    print(sigmoid(theta1, current_data))
-    print(sigmoid(theta2, current_data))
-    print(sigmoid(theta3, current_data))
-    print(sigmoid(theta4, current_data))
-    print(sigmoid(theta5, current_data))
-    print(sigmoid(theta6, current_data))
-    print(sigmoid(theta7, current_data))
-    print(sigmoid(theta8, current_data))
-    print(sigmoid(theta9, current_data))
-    '''
     if sigmoid(theta1, current_data) > temp:
         temp = sigmoid(theta1, current_data)
         largest = 1
